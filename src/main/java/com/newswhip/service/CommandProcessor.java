@@ -35,9 +35,10 @@ public class CommandProcessor {
                 throw new IOException(e.getMessage());
             }
 
-            InputValidator.checkNotNull(command);
+            String trimmedCommand = command.trim();
+            InputValidator.checkEmpty(trimmedCommand);
             String[] splitCommand = command.trim().split("\\s");
-
+            InputValidator.runValidation(splitCommand);
 
             switch(CommandElements.Operation.valueOf(splitCommand[0])){
                 case ADD -> addUrl(splitCommand[1], Integer.parseInt(splitCommand[2]));
