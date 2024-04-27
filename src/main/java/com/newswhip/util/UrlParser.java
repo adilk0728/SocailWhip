@@ -22,8 +22,7 @@ public final class UrlParser {
         return inputUrl.substring(indexOfSecondLvlEnd + 2, indexOfTldEnd + 1);
     }
 
-//  TODO: Logic to extract path only if required
-//    public static String getPagePath(String inputUrl){
-//       return "";
-//    }
+    public static String getSubAndTopDomain(String inputUrl){
+        return String.format(getSecondLevelDomain(inputUrl) + "%s" + getTopLevelDomain(inputUrl), ".");
+    }
 }
