@@ -1,7 +1,9 @@
 package com.newswhip;
 
 import com.newswhip.repository.InMemoryDB;
+import com.newswhip.repository.Repository;
 import com.newswhip.service.CommandProcessor;
+import com.newswhip.service.StandardInProcessor;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -9,10 +11,10 @@ import java.io.InputStreamReader;
 
 public class Main {
     public static void main(String[] args){
-        InMemoryDB db = InMemoryDB.getInstance();
-        CommandProcessor commandProcessor = new CommandProcessor(new BufferedReader(new InputStreamReader(System.in)), db);
+        Repository db = InMemoryDB.getInstance();
+        CommandProcessor standardInProcessor = new StandardInProcessor(new BufferedReader(new InputStreamReader(System.in)), db);
         try {
-            commandProcessor.read();
+            standardInProcessor.readAndProcess();
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }

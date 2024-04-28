@@ -1,13 +1,15 @@
 package com.newswhip.repository;
 
+import com.newswhip.exception.DuplicationEntryException;
+import com.newswhip.exception.NoElementsException;
+import com.newswhip.exception.OperationInvalidException;
 import com.newswhip.util.UrlParser;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 public final class InMemoryDB implements Repository{
-    Map<String, Integer> linkToScore;
+    private final Map<String, Integer> linkToScore;
     public static InMemoryDB INSTANCE = null;
     private InMemoryDB(Map<String, Integer> linkToScore) {
         this.linkToScore = linkToScore;
@@ -20,41 +22,40 @@ public final class InMemoryDB implements Repository{
     }
 
     @Override
-    public void addUrlWithScore(String inputUrl, int score) {
+    public void addUrlWithScore(String inputUrl, int score) throws DuplicationEntryException {
         if(!linkToScore.containsKey(inputUrl)){
             linkToScore.put(inputUrl, score);
+        } else {
+            throw new DuplicationEntryException("This URL has already been added");
         }
-        //TODO Handle existing key throw exception
     }
 
     @Override
-    public Map<String, Integer> getAggregatedScoreForUrl() {
-//        return linkToScore.entrySet().stream()
-//               .collect(Collectors.groupingBy(
-//                       entry -> UrlParser.getSubAndTopDomain(entry.getKey()),
-//                       Collectors.summingInt(Map.Entry::getValue)
-//               ));
-         Map<String, CountAndScore> temp = linkToScore.entrySet().stream().collect(Collectors.groupingBy(entry -> UrlParser.getSubAndTopDomain(entry.getKey()),
-                                                Collectors.collectingAndThen(Collectors.toList(),
-                                                        values -> {
-                                                            int count = values.size();
-                                                            int sum = values.stream().mapToInt(Map.Entry::getValue).sum();
-                                                            return new CountAndScore(count, sum);
-                                                    })));
-         return null;
+    public Map<String, CountAndScore> getAggregatedScoreForUrl() throws NoElementsException {
+        if(linkToScore.isEmpty()){
+            throw new NoElementsException("There are no elements to be exported");
+        }
+
+         return  linkToScore.entrySet().stream().collect(Collectors.groupingBy(entry -> UrlParser.getSubAndTopDomain(entry.getKey()),
+                Collectors.collectingAndThen(Collectors.toList(),
+                        values -> {
+                            int count = values.size();
+                            int sum = values.stream().mapToInt(Map.Entry::getValue).sum();
+                            return new CountAndScore(count, sum);
+                        })));
     }
 
     @Override
-    public void removeUrl(String urlToDelete) {
+    public void removeUrl(String urlToDelete) throws OperationInvalidException {
         if(!linkToScore.containsKey(urlToDelete)){
-//            TODO: throw exception
+            throw new OperationInvalidException("Either there is no value mapped to this url or REMOVE command is run before ADD");
         }
         linkToScore.remove(urlToDelete);
     }
 
-    class CountAndScore {
-        private int count;
-        private int score;
+    public static class CountAndScore {
+        private final int count;
+        private final int score;
 
         public CountAndScore(int count, int score) {
             this.count = count;
@@ -65,16 +66,9 @@ public final class InMemoryDB implements Repository{
             return count;
         }
 
-        public void setCount(int count) {
-            this.count = count;
-        }
-
         public int getScore() {
             return score;
         }
 
-        public void setScore(int score) {
-            this.score = score;
-        }
     }
 }
