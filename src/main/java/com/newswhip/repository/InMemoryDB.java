@@ -70,5 +70,22 @@ public final class InMemoryDB implements Repository{
             return score;
         }
 
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            CountAndScore that = (CountAndScore) o;
+
+            if (count != that.count) return false;
+            return score == that.score;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = count;
+            result = 31 * result + score;
+            return result;
+        }
     }
 }

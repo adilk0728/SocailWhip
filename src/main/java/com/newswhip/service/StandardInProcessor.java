@@ -13,9 +13,10 @@ import java.util.List;
 
 public class StandardInProcessor implements CommandProcessor{
     private BufferedReader bufferedReader;
-    private final Repository inMemoryDB;
-    private String command;
+    private Repository inMemoryDB;
     private CommandElement commandElement;
+    private boolean shouldExit;
+
     public StandardInProcessor(BufferedReader bufferedReader, Repository db) {
         this.bufferedReader = bufferedReader;
         this.inMemoryDB = db;
@@ -23,15 +24,15 @@ public class StandardInProcessor implements CommandProcessor{
 
     @Override
     public void readAndProcess() {
-        while(true){
+        while(!shouldExit){
             String legend = """
                     ---------------------------------------
                     Enter your command --->
-                    ADD/REMOVE/EXPORT SocialURL(<protocol>//<sub-domain>.<second-level-domain>.<top-level-domain>/<path>) SCORE
+                    ADD/REMOVE/EXPORT/EXIT SocialURL(<protocol>//<sub-domain>.<second-level-domain>.<top-level-domain>/<path>) SCORE
                     E.g., ADD https://www.newswhip.com/ 100
                     """;
             System.out.println(legend);
-
+            String command = "";
             try {
                 command = bufferedReader.readLine();
             } catch (IOException e) {
@@ -63,7 +64,10 @@ public class StandardInProcessor implements CommandProcessor{
                 System.out.printf("""
                         %s
                         %s
-                        """, header, sb);
+                        """, header, sb.toString());
+            }
+            case EXIT -> {
+                shouldExit = true;
             }
         }
     }

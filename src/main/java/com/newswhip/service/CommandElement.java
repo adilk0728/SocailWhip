@@ -9,8 +9,24 @@ class CommandElement {
     private String url;
     private int score;
 
+    public CommandElement(){
+
+    }
     public CommandElement(List<String> commandParts){
         setup(commandParts);
+    }
+
+    public CommandElement(Operation op){
+         this(op, "", 0);
+    }
+
+    public CommandElement(Operation op, String url){
+        this(op, url, 0);
+    }
+    public CommandElement(Operation op, String url, int score){
+        this.op = op;
+        this.url = url;
+        this.score = score;
     }
     private void setup(List<String> commandList){
        if((commandList.size() >= 1)){

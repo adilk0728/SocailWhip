@@ -27,7 +27,7 @@ public final class InputValidator {
                     checkCompleteness(command, 2);
                     checkSecondArgument(command.get(1));
                 }
-                case "EXPORT" -> {
+                case "EXPORT", "EXIT" -> {
                     checkCompleteness(command, 1);
                 }
                 default -> {

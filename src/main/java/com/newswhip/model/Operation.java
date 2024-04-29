@@ -3,5 +3,6 @@ package com.newswhip.model;
 public enum Operation {
     ADD,
     REMOVE,
-    EXPORT;
+    EXPORT,
+    EXIT;
 }
