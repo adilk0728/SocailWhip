@@ -5,25 +5,22 @@ import com.newswhip.exception.NoElementsException;
 import com.newswhip.exception.OperationInvalidException;
 import com.newswhip.model.Operation;
 import com.newswhip.repository.Repository;
-import com.newswhip.util.InputValidator;
-import java.io.BufferedReader;
+
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
+import java.util.Objects;
 
 public class StandardInProcessor implements CommandProcessor{
-    private BufferedReader bufferedReader;
-    private Repository inMemoryDB;
-    private CommandElement commandElement;
+    private final Repository inMemoryDB;
     private boolean shouldExit;
+    private InputDataSource inputDataSource;
 
-    public StandardInProcessor(BufferedReader bufferedReader, Repository db) {
-        this.bufferedReader = bufferedReader;
-        this.inMemoryDB = db;
+    public StandardInProcessor(InputDataSource inputDataSource, Repository inMemoryDB) {
+        this.inputDataSource = inputDataSource;
+        this.inMemoryDB = inMemoryDB;
     }
 
     @Override
-    public void readAndProcess() {
+    public void process() {
         while(!shouldExit){
             String legend = """
                     ---------------------------------------
@@ -32,17 +29,13 @@ public class StandardInProcessor implements CommandProcessor{
                     E.g., ADD https://www.newswhip.com/ 100
                     """;
             System.out.println(legend);
-            String command = "";
+            CommandElement commandElement = null;
             try {
-                command = bufferedReader.readLine();
+                 commandElement = inputDataSource.getParsedCommand();
             } catch (IOException e) {
                 System.out.println("An error occurred when reading from Standard Input");
             }
-            List<String> splitCommandList = Arrays.stream(command.trim().split("\\s")).toList();
-            InputValidator.checkEmpty(command);
-            InputValidator.runValidation(splitCommandList);
-            commandElement = new CommandElement(splitCommandList);
-            execute(commandElement);
+            execute(Objects.requireNonNull(commandElement));
         }
     }
 
@@ -64,7 +57,7 @@ public class StandardInProcessor implements CommandProcessor{
                 System.out.printf("""
                         %s
                         %s
-                        """, header, sb.toString());
+                        """, header, sb);
             }
             case EXIT -> {
                 shouldExit = true;

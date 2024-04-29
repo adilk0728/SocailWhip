@@ -2,22 +2,19 @@ package com.newswhip.service;
 
 import com.newswhip.model.Operation;
 import java.util.List;
+import java.util.Objects;
 
 
 class CommandElement {
     private Operation op;
     private String url;
     private int score;
-
-    public CommandElement(){
-
-    }
     public CommandElement(List<String> commandParts){
         setup(commandParts);
     }
 
     public CommandElement(Operation op){
-         this(op, "", 0);
+         this(op, null, 0);
     }
 
     public CommandElement(Operation op, String url){
@@ -54,4 +51,23 @@ class CommandElement {
         return score;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        CommandElement that = (CommandElement) o;
+
+        if (score != that.score) return false;
+        if (op != that.op) return false;
+        return Objects.equals(url, that.url);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = op != null ? op.hashCode() : 0;
+        result = 31 * result + (url != null ? url.hashCode() : 0);
+        result = 31 * result + score;
+        return result;
+    }
 }
