@@ -12,7 +12,7 @@ import java.util.Objects;
 public class StandardInProcessor implements CommandProcessor{
     private final Repository inMemoryDB;
     private boolean shouldExit;
-    private InputDataSource inputDataSource;
+    private final InputDataSource inputDataSource;
 
     public StandardInProcessor(InputDataSource inputDataSource, Repository inMemoryDB) {
         this.inputDataSource = inputDataSource;

@@ -4,5 +4,5 @@ public enum Operation {
     ADD,
     REMOVE,
     EXPORT,
-    EXIT;
+    EXIT
 }
