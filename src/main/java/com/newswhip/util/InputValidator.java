@@ -38,7 +38,6 @@ public final class InputValidator {
 
         private static void checkSecondArgument(String secondArg) throws OperationInvalidException {
             checkNotNull(secondArg);
-            //TODO: Does it catch any number in this regex?
             if(secondArg.matches("-?\\d+")){
                 throw new OperationInvalidException("The second argument must be a URL (String)");
             }
